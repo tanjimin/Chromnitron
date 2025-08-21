@@ -1,5 +1,5 @@
 ## Quick Start
-* **Google Colab:** Explore Chromnitron's features in an interactive environment [Chromnitron inference colab](https://colab.research.google.com/drive/1V6Y3iJWmcnCAn4-Uzmovb-w7KFQTKD4E#scrollTo=QYInjcZUMXH6).
+* **Google Colab:** Explore Chromnitron's features in an interactive environment [Chromnitron inference colab](https://colab.research.google.com/drive/1NEgKCjJ4ipGMrtq8MuTmWy4LcahGswjv?usp=sharing).
 
 ## Local installation guide
 
