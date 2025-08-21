@@ -1,0 +1,21 @@
+pipeline_config: 
+  run_name: 'atac_seq_test_run'
+  fastq_files:
+    rep1:
+        R1: /home/jimin/Downloads/CD8_ATAC_seq_ENCSR476VJY/Rep1/R1/subsampled_fastq.gz
+        R2: /home/jimin/Downloads/CD8_ATAC_seq_ENCSR476VJY/Rep1/R2/subsampled_fastq.gz
+  output_path: /home/jimin/Downloads/chrom2vec/single_datasets
+  module_path: /home/jimin/Documents/chromnitron-public-release-scratch/chrom2vec/src/Chrom2VecModules
+  resources_path: /home/jimin/Downloads/chrom2vec/resources
+
+singularity_config:
+  use_singularity: 'True'
+  bind_path: /home/jimin:/home/jimin
+
+resource_config:
+  hisat2_index: alignment_index/hisat2
+  assembly_name: hg38
+  blacklist: blacklist/hg38-blacklist.v2.bed
+  atac_peaks: atac_peaks/cPeaks_hg38.bed
+  atac_non_peaks: atac_peaks/cPeaks_hg38_complement.bed
+  chr_size: chr_sizes

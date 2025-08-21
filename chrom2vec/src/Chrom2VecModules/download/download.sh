@@ -1,0 +1,9 @@
+#!/bin/bash
+
+USE_SINGULARITY=$1
+SINGULARITY_MAPPING=$2
+
+URL=$3
+OUTPUT=$4
+
+wget -O $OUTPUT $URL

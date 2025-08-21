@@ -1,0 +1,24 @@
+pipeline_config: 
+  run_name: '<condition-name>'
+  fastq_files:
+    rep1:
+        R1: <path-to-rep1-R1.fastq.gz>
+        R2: <path-to-rep1-R2.fastq.gz>
+    rep2:
+        R1: <path-to-rep2-R1.fastq.gz>
+        R2: <path-to-rep2-R2.fastq.gz>
+  output_path: <path-to-output-folder>
+  module_path: <path-to-module-folder>
+
+singularity_config:
+  use_singularity: True
+  bind_path: <path-to-bind-path>:<path-to-bind-path>
+
+resource_config:
+  root: <path-to-resources-folder>
+  hisat2_index: alignment_index/hisat2
+  assembly_name: hg38
+  blacklist: blacklist/hg38-blacklist.v2.bed
+  atac_peaks: atac_peaks/cPeaks_hg38.bed
+  atac_non_peaks: atac_peaks/cPeaks_hg38_complement.bed
+  chr_size: chr_sizes
