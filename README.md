@@ -6,7 +6,7 @@ Read our pre-print on [biorxiv](https://www.biorxiv.org/content/10.1101/2025.08.
 
 ## Quick Start
 For those looking to get started with Chromnitron quickly, we recommend the following resources:
-* **Google Colab:** Explore Chromnitron's features in an interactive environment [Chromnitron inference colab](https://colab.research.google.com/drive/1V6Y3iJWmcnCAn4-Uzmovb-w7KFQTKD4E#scrollTo=QYInjcZUMXH6).
+* **Google Colab:** Explore Chromnitron's features in an interactive environment [Google Colab](https://colab.research.google.com/drive/1NEgKCjJ4ipGMrtq8MuTmWy4LcahGswjv?usp=sharing).
 * **Local Inference:** For local setup, refer to the detailed instructions in the [Chromnitron README](chromnitron).
 * **Custom Analysis:** If you want to use Chromnitron with your own ATAC-seq data, please refer to the [Chrom2Vec README](chrom2vec).
 
