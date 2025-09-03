@@ -21,7 +21,7 @@ https://www.dropbox.com/scl/fi/pdtb53vrioxufkyddc5je/input_resources.tar?rlkey=1
 ## --- Choose one of the options below --- ##
 
 #This archive includes the base weights and 4 sample LoRA weights, easy for testing <400MB>.
-wget -O model_weights_subset.tar \ 
+wget -O model_weights_subset.tar \
 https://www.dropbox.com/scl/fi/dbi8gc2ej2zi4vktambnn/model_weights_subset.tar?rlkey=gd69we2pq6awjhkfh944iusdz&st=w0i2zgop&dl=1
 
 
