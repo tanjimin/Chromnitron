@@ -30,10 +30,10 @@ wget -O model_weights.tar \
 https://www.dropbox.com/scl/fi/jlnlydqnp55qzliyj1enb/model_weights.tar?rlkey=j7fypvzyyqhuw36l5gcgmly9s&st=5ixf4p4z&dl=1
 ```
 2. Extract files from archives.
-Pick either subset or the full set of model weights: `!tar -xf model_weights_subset.tar` (Subset) or `!tar -xf model_weights_subset.tar` (Fullset)
+Pick either subset or the full set of model weights: `!tar -xf model_weights_subset.tar` (Subset) or `!tar -xf model_weights.tar` (Fullset)
 Sequence, ATAC-seq and CAP embeddings: `!tar -xf input_resources.tar`
 
-3. Move model_weights and input_resources under a common folder following the structure listed below:
+1. Move model_weights and input_resources under a common folder following the structure listed below:
 ```bash
 <path-to-chromnitron_resources>
 ├── input_resources
