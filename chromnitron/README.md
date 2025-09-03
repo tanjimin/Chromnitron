@@ -9,7 +9,7 @@
 conda create -n chromnitron # If you haven't created an environment
 conda activate chromnitron
 conda install python==3.9
-pip install -r requirements_<conpute_type>.txt
+pip install -r requirements_<compute_type>.txt
 ```
 
 ## Download inference data and model weights
