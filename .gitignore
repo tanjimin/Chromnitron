@@ -1,3 +1,8 @@
+# Other
+*.tar
+wget-log*
+*yb2612*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
