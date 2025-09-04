@@ -1,6 +1,6 @@
 pandas==2.3.1
 zarr==2.18.0
-numcodecs==0.14.0
+numcodecs==0.12.1
 tqdm==2.2.3
 pyyaml==5.4.1
 pyBigWig==0.3.24
