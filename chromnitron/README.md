@@ -9,7 +9,7 @@
 conda create -n chromnitron # If you haven't created an environment
 conda activate chromnitron
 conda install python==3.9
-pip install -r requirements_<conpute_type>.txt
+pip install -r requirements_<compute_type>.txt
 ```
 
 ## Download inference data and model weights
@@ -21,7 +21,7 @@ https://www.dropbox.com/scl/fi/pdtb53vrioxufkyddc5je/input_resources.tar?rlkey=1
 ## --- Choose one of the options below --- ##
 
 #This archive includes the base weights and 4 sample LoRA weights, easy for testing <400MB>.
-wget -O model_weights_subset.tar \ 
+wget -O model_weights_subset.tar \
 https://www.dropbox.com/scl/fi/dbi8gc2ej2zi4vktambnn/model_weights_subset.tar?rlkey=gd69we2pq6awjhkfh944iusdz&st=w0i2zgop&dl=1
 
 
@@ -30,10 +30,10 @@ wget -O model_weights.tar \
 https://www.dropbox.com/scl/fi/jlnlydqnp55qzliyj1enb/model_weights.tar?rlkey=j7fypvzyyqhuw36l5gcgmly9s&st=5ixf4p4z&dl=1
 ```
 2. Extract files from archives.
-Pick either subset or the full set of model weights: `!tar -xf model_weights_subset.tar` (Subset) or `!tar -xf model_weights_subset.tar` (Fullset)
+Pick either subset or the full set of model weights: `!tar -xf model_weights_subset.tar` (Subset) or `!tar -xf model_weights.tar` (Fullset)
 Sequence, ATAC-seq and CAP embeddings: `!tar -xf input_resources.tar`
 
-3. Move model_weights and input_resources under a common folder following the structure listed below:
+1. Move model_weights and input_resources under a common folder following the structure listed below:
 ```bash
 <path-to-chromnitron_resources>
 ├── input_resources
