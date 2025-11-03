@@ -9,13 +9,13 @@ pipeline_config:
         R2: <path-to-rep2-R2.fastq.gz>
   output_path: <path-to-output-folder>
   module_path: <path-to-module-folder>
+  resources_path: <path-to-resources-folder>
 
 singularity_config:
   use_singularity: True
   bind_path: <path-to-bind-path>:<path-to-bind-path>
 
 resource_config:
-  root: <path-to-resources-folder>
   hisat2_index: alignment_index/hisat2
   assembly_name: hg38
   blacklist: blacklist/hg38-blacklist.v2.bed

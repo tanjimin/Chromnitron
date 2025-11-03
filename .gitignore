@@ -2,6 +2,8 @@
 *.tar
 wget-log*
 *yb2612*
+._.DS_Store
+config_B.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

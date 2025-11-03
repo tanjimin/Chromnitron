@@ -27,4 +27,4 @@ python main.py config.yaml
 The pipeline will automatically download a few files on the first run. In case some links are broken, here is a list of all files that you can manually check and download:
 1. Hisat2 alignment index: `https://genome-idx.s3.amazonaws.com/hisat/${ASSEMBLY}_genome.tar.gz`
 2. cPeaks (hg38): `https://cloud.tsinghua.edu.cn/f/6eb530748b324f53bc1f/?dl=1` # Very likely to change in the future
-3. chr_sizes (hg38): `https://raw.githubusercontent.com/igvteam/igv/master/genomes/sizes/hg38.chrom.sizes`
+3. chr_sizes (hg38): `https://raw.githubusercontent.com/igvteam/igv/main/genomes/sizes/hg38.chrom.sizes`
