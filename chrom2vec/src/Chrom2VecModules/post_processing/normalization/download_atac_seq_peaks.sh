@@ -17,7 +17,7 @@ fi
 
 if [ ! -f hg38.chrom.sizes ]; then
     echo "Downloading hg38.chrom.sizes"
-    wget -O hg38.chrom.sizes https://raw.githubusercontent.com/igvteam/igv/master/genomes/sizes/hg38.chrom.sizes
+    wget -O hg38.chrom.sizes https://raw.githubusercontent.com/igvteam/igv/main/genomes/sizes/hg38.chrom.sizes
 fi
 
 function remove_excessive_chromosomes() {

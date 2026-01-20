@@ -12,7 +12,7 @@ cd $parent_path
 #if [ ! -f hg38.chrom.sizes ]; then
 if [ ! -f $chr_sizes_raw ]; then
     echo "Downloading $chr_sizes_raw"
-    wget -O $chr_sizes_raw https://raw.githubusercontent.com/igvteam/igv/master/genomes/sizes/$chr_sizes_raw
+    wget -O $chr_sizes_raw https://raw.githubusercontent.com/igvteam/igv/main/genomes/sizes/$chr_sizes_raw
 fi
 
 function remove_excessive_chromosomes() {
