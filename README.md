@@ -6,7 +6,7 @@
 
 This repository contains the official implementation of **Chromnitron** and its associated data-processing pipeline, **Chrom2vec**. For early testing, only  the inference pipeline for Chromnitron and ATAC-seq processing component for Chrom2Vec are included. Please stay tuned for upcoming full release.
 
-Read our pre-print on [biorxiv](https://www.biorxiv.org/content/10.1101/2025.08.17.670761v1.article-metrics).
+Read our pre-print on [biorxiv](https://www.biorxiv.org/content/10.1101/2025.08.17.670761v2).
 
 ## Quick Start
 For those looking to get started with Chromnitron quickly, we recommend the following resources:
