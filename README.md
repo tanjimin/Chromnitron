@@ -1,6 +1,6 @@
 # Chromnitron
 
-![Chromnitron overview](docs/assets/chromnitron_image.png)
+<img src="docs/assets/chromnitron_image.png" alt="Chromnitron overview" width="33%" />
 
 This repository contains the official implementation of **Chromnitron** and its associated data-processing pipeline, **Chrom2vec**. For early testing, only  the inference pipeline for Chromnitron and ATAC-seq processing component for Chrom2Vec are included. Please stay tuned for upcoming full release.
 
