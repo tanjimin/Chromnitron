@@ -205,9 +205,15 @@ def run_zarr_to_bigwig(param_tuple):
 
     zarr_to_bigwig_script_path = f"{module_path}/io/zarr_to_bigwig.sh"  
 
+    # Keep the original chrom2vec bigWig export unchanged.
     subprocess.run(["bash", zarr_to_bigwig_script_path, use_singularity, bind_path,
                     f"{normalized_path}/genrich_normalized.zarr",
                     f"{bigwig_path}/genrich_normalized.bw"])
+    # Add a visualization track that matches Chromnitron's model-input transform.
+    subprocess.run(["bash", zarr_to_bigwig_script_path, use_singularity, bind_path,
+                    f"{normalized_path}/genrich_normalized.zarr",
+                    f"{bigwig_path}/genrich_normalized_clip0_log1p.bw",
+                    "--clip-negative", "--log1p"])
 
 if __name__ == "__main__":
     main()
