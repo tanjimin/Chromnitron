@@ -109,11 +109,21 @@ class SlidingWindowRegion(CustomRegion):
             start = max(start - margin, 0)
             end = min(end + margin, chr_length)
             if end - start > self.window_size:
-                n_windows = (end - start) // self.step_size
+                # Clamp only the windows that would run past the chromosome boundary.
+                n_windows = max(1, (end - start) // self.step_size)
+                max_locus_start = max(start, end - self.window_size)
+                previous_window_start = None
                 for region_sub_id, i in enumerate(range(n_windows)):
-                    new_loci.append([chr_name, start + i * self.step_size, start + i * self.step_size + self.window_size, f'region_{region_id}_{region_sub_id}'])
+                    window_start = start + i * self.step_size
+                    if window_start > max_locus_start:
+                        window_start = max_locus_start
+                    if window_start == previous_window_start:
+                        continue
+                    previous_window_start = window_start
+                    new_loci.append([chr_name, window_start, window_start + self.window_size, f'region_{region_id}_{region_sub_id}'])
             else:
-                new_loci.append([chr_name, start, start + self.window_size, f'region_{region_id}_0'])
+                window_start = min(start, max(0, chr_length - self.window_size))
+                new_loci.append([chr_name, window_start, window_start + self.window_size, f'region_{region_id}_0'])
         return np.array(new_loci)
 
 class CustomRangeRegion(SlidingWindowRegion):
