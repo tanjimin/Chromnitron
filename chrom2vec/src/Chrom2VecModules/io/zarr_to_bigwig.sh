@@ -8,6 +8,7 @@ BIND_PATH=$2
 
 INPUT_ZARR=$3  # Replace INPUT_ZARR with a more descriptive name based on its purpose
 OUTPUT_BIGWIG=$4  # Replace OUTPUT_BIGWIG with a more descriptive name based on its purpose
+EXTRA_ARGS=("${@:5}")  # Optional transform flags forwarded to zarr_to_bigwig.py.
 
 # If use singularity
 if [ $USE_SINGULARITY == "True" ]; then
@@ -16,10 +17,10 @@ if [ $USE_SINGULARITY == "True" ]; then
     LOCAL_IMAGE_PATH="${IMAGE_URI/docker:\/\//}"
     CONTAINER=~/.singularity/cache/"${LOCAL_IMAGE_PATH//\//_}".sif
     singularity exec --bind $BIND_PATH $CONTAINER \
-    python3 $MODULE_PATH/zarr_to_bigwig.py $INPUT_ZARR $OUTPUT_BIGWIG
+    python3 $MODULE_PATH/zarr_to_bigwig.py $INPUT_ZARR $OUTPUT_BIGWIG "${EXTRA_ARGS[@]}"
 else
     source ~/.bashrc
     conda activate /gpfs/data/tsirigoslab/home/jt3545/conda/hic
-    python3 $MODULE_PATH/zarr_to_bigwig.py $INPUT_ZARR $OUTPUT_BIGWIG
+    python3 $MODULE_PATH/zarr_to_bigwig.py $INPUT_ZARR $OUTPUT_BIGWIG "${EXTRA_ARGS[@]}"
 fi
 
