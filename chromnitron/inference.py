@@ -14,7 +14,11 @@ def main():
     loci_info, chrs, celltype_list, cap_list = load_inputs(config) # Load inputs
 
     # Inference
-    if config['inference_config']['inference']['enable']:
+    if config['inference_config']['inference']['enable'] \
+            and config['inference_config']['inference'].get('engine', 'stock') == 'fast':
+        # Opt-in throughput engine: removes redundant per-CAP DNA/ATAC/protein loading.
+        fast_inference(config, loci_info, chrs, celltype_list, cap_list)
+    elif config['inference_config']['inference']['enable']:
         for cap in cap_list:
             print(f'Loading model for {cap}')
             model = load_chromnitron(config, cap)
@@ -64,7 +68,13 @@ def save_prediction(pred_cache, label_df, config, celltype, cap):
 def load_data(config, celltype, loci_info, cap, chr_sizes):
     input_dict = config['input_resource']
     input_seq_path = os.path.join(input_dict['root'], input_dict['sequence'], f'{config["inference_config"]["input"]["assembly"]}.zarr')
-    input_features_path = os.path.join(input_dict['root'], input_dict['atac'], f'{celltype}.zarr')
+    # Optional atac_root / atac_pattern let the ATAC zarr live on a separate root and/or a
+    # nested layout (e.g. '{sample}/s8_normalized/genrich_normalized.zarr'). Both default to
+    # the stock behaviour: input_features_path = root/atac/{celltype}.zarr.
+    atac_base = input_dict.get('atac_root', input_dict['root'])
+    atac_pattern = input_dict.get('atac_pattern')
+    atac_rel = atac_pattern.format(sample=celltype) if atac_pattern else f'{celltype}.zarr'
+    input_features_path = os.path.join(atac_base, input_dict['atac'], atac_rel)
     assembly = config['inference_config']['input']['assembly']
     esm_feature_path = os.path.join(input_dict['root'], input_dict['cap'], f'{cap}.npz')
 
@@ -145,6 +155,80 @@ def run_inference(config, model, dataloader, celltype, cap, use_tqdm=True):
     pred_cache = np.exp(pred_cache) - 1
     label_df = pd.DataFrame(label_cache_dict)
     return pred_cache, label_df
+
+def build_fast_label_df(windows, celltype, cap):
+    ''' Same columns/order as run_inference's label_df, built from cached windows. '''
+    return pd.DataFrame({'chr': [w[0] for w in windows],
+                         'start': [w[1] for w in windows],
+                         'end': [w[2] for w in windows],
+                         'region_id': [w[3] for w in windows],
+                         'celltype': celltype,
+                         'cap': cap})
+
+def fast_inference(config, loci_info, chrs, celltype_list, cap_list,
+                   batch_size=None, cache_workers=8):
+    ''' Throughput-optimized inference. Removes three redundancies of the stock loop
+    WITHOUT changing the math (see chromnitron_model/resident.py and
+    chromnitron_data/cached_inputs.py):
+      F1  read + transform seq/ATAC ONCE per celltype, reuse across all CAPs
+      F2  build the base + LoRA model ONCE, swap only the per-CAP LoRA delta in place
+      F3  encode the protein (ESM) embedding ONCE per CAP, broadcast across the batch
+    Reads go through the SAME InferenceDataset/Track/ZarrStorage as stock, so swapping a
+    DNA or ATAC zarr is validated identically (chromosome-length check included). '''
+    from chromnitron_model.resident import ResidentChromnitron
+    from chromnitron_data.cached_inputs import CachedCelltypeInputs
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    on_cuda = device.type == 'cuda'
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+
+    bs = batch_size or config['inference_config']['inference']['batch_size']
+    input_dict = config['input_resource']
+    rm = ResidentChromnitron(config)  # F2: base + LoRA built once, resident on device
+
+    for celltype in celltype_list:
+        # Build the dataset ONCE per celltype. This opens AND length-checks the seq/ATAC
+        # zarr exactly as stock does; cap_list[0] only supplies an ESM path we never read.
+        chr_sizes = get_chr_sizes(config, chrs)
+        dataloader = load_data(config, celltype, loci_info, cap_list[0], chr_sizes)
+        cache = CachedCelltypeInputs(dataloader.dataset, n_workers=cache_workers)  # F1
+        N = len(cache)
+        print(f'[fast] {celltype}: cached {N} windows once (reused by all {len(cap_list)} CAPs)')
+        if N == 0:
+            print(f'[fast] {celltype}: 0 windows after blacklist, skipping')
+            continue
+
+        seq_host = torch.from_numpy(cache.seq)
+        atac_host = torch.from_numpy(cache.atac)
+        if on_cuda:
+            seq_host = seq_host.pin_memory()
+            atac_host = atac_host.pin_memory()
+
+        for cap in cap_list:
+            if verify_prediction_exists(config, celltype, cap):
+                continue
+            rm.set_cap(cap)  # swap only this CAP's LoRA delta
+            esm_path = os.path.join(input_dict['root'], input_dict['cap'], f'{cap}.npz')
+            if not os.path.exists(esm_path):
+                print(f'[fast] {celltype}/{cap}: missing ESM {esm_path}, skipping')
+                continue
+            prot_emb = rm.encode_protein(np.load(esm_path)['embedding'])  # F3: once per CAP
+
+            preds_chunks = []
+            with torch.no_grad():
+                for s0 in range(0, N, bs):
+                    seq_b = seq_host[s0:s0 + bs].to(device, non_blocking=on_cuda)
+                    atac_b = atac_host[s0:s0 + bs].to(device, non_blocking=on_cuda)
+                    seq_in = seq_b.transpose(1, 2).contiguous()   # (b, 5, 8192)
+                    epi_in = atac_b.unsqueeze(1)                   # (b, 1, 8192)
+                    preds = rm.forward_seq(seq_in, epi_in, prot_emb)
+                    preds_chunks.append(preds.float().cpu().numpy())
+            pred_cache = np.concatenate(preds_chunks, axis=0)
+            pred_cache = np.exp(pred_cache) - 1                    # stock exp transform
+            label_df = build_fast_label_df(cache.windows, celltype, cap)
+            save_prediction(pred_cache, label_df, config, celltype, cap)
+            print(f'[fast] {celltype}/{cap}: done ({N} windows)')
 
 def load_inputs(config):
     loci_info, chrs = read_region_bed(os.path.join(config['inference_config']['input']['root'], config['inference_config']['input']['locus_list_path']))
