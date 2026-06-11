@@ -27,6 +27,7 @@ inference_config:
     cap_list_path: cap.txt # Text file, one CAP per line
   inference:
     enable: True
+    # engine: fast # Optional, default 'stock'. Set 'fast' for the faster engine (identical output).
     use_finetune: auto # If auto, use finetuned model if available, otherwise use base model
     batch_size: 8 # Batch size for inference
     num_workers: 8 # Number of cpu workers for inference
